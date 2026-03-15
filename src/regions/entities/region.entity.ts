@@ -8,6 +8,6 @@ export class Region {
     @Column('text')
     regionName: string;
 
-    @Column('array')
+    @Column('simple-array')
     regionStates: string[];
 }
