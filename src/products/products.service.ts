@@ -30,7 +30,7 @@ export class ProductsService {
 
   //find by provider
   async findByProvider(id: string) {
-    const products = await this.productRepository.find({ where: { provider: id } });
+    const products = await this.productRepository.find({ where: { productId: id } });
     if (products.length === 0) throw new NotFoundException();
     return products;
   }
