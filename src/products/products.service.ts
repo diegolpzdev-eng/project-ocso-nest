@@ -18,7 +18,7 @@ export class ProductsService {
     return product;
   }
 
-  async findAll() {
+findAll() {
     return this.productRepository.find();
   }
 
@@ -29,10 +29,8 @@ export class ProductsService {
   }
 
   //find by provider
-  async findByProvider(id: string) {
-    const products = await this.productRepository.find({ where: { productId: id } });
-    if (products.length === 0) throw new NotFoundException();
-    return products;
+ findByProvider(id: string) {
+   return "OK"
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
