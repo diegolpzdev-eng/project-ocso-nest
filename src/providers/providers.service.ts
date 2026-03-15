@@ -24,6 +24,15 @@ export class ProvidersService {
     return `This action returns a #${id} provider`;
   }
 
+  findByname(name: string) {
+   const provider =  this.providersRepository.findOneBy({ providerName: name });
+   return provider;
+   if (!provider) {
+    throw new Error('Provider not found');
+   }
+   return provider;
+  }
+
   update(id: number, updateProviderDto: UpdateProviderDto) {
     return `This action updates a #${id} provider`;
   }
