@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, ValidationPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -33,7 +33,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.productsService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return await this.productsService.remove(id);
   }
 }
