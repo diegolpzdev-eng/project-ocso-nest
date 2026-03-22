@@ -42,3 +42,4 @@ export class LocationsController {
     return this.locationsService.remove(+id);
   }
 }
+
