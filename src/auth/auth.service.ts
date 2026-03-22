@@ -1,26 +1,79 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "./entities/user.entity";
+import { Repository } from "typeorm";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
+import { LoginUserDto } from "./dto/login-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { Employee } from "src/employees/entities/employee.entity";
+import { Manager } from "src/managers/entities/manager.entity";
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Employee) private employeeRepository: Repository<Employee>,
+    @InjectRepository(Manager) private managerRepository: Repository<Manager>,
+    private jwtService: JwtService,
+  ) {}
+
+  async registerEmployee(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles
+    if (roles.includes("Admin") || roles.includes("Manager")) {
+      throw new BadRequestException("Invalid")
+    }
+    createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
+    const user = await this.userRepository.save(createUserDto);
+    const employee = await this.employeeRepository.preload({
+      employeeId: id,
+    })
+    employee.user = user;
+    return this.employeeRepository.save(employee)
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async registerManager(id: string, createUserDto: CreateUserDto) {
+    const roles = createUserDto.userRoles
+    if (roles.includes("Admin") || roles.includes("Employee")) {
+      throw new BadRequestException("Invalid")
+    }
+    createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
+    const user = await this.userRepository.save(createUserDto);
+    const manager = await this.managerRepository.preload({
+      managerId: id,
+    })
+    manager.user = user;
+    return this.managerRepository.save(manager)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async loginUser(loginUserDto: LoginUserDto) {
+    const user = await this.userRepository.findOne({
+      where: {
+        userEmail: loginUserDto.userEmail,
+      },
+    });
+    if (!user) throw new UnauthorizedException("No estas autorizado")
+    const match = await bcrypt.compare(
+      loginUserDto.userPassword,
+      user.userPassword,
+    );
+    if (!match) throw new UnauthorizedException("No estas autorizado");
+    const payload = {
+      userEmail: user.userEmail,
+      userPassword: user.userPassword,
+      userRoles: user.userRoles
+    };
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async updateUser(id: string, updateUserDto: UpdateUserDto){
+    updateUserDto.userPassword = bcrypt.hashSync(updateUserDto.userPassword, 5);
+    const newUserData = await this.userRepository.preload({
+      userId: id,
+      ...updateUserDto
+    })
+    this.userRepository.save(newUserData)
+    return newUserData
   }
 }

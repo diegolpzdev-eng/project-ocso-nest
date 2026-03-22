@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from "uuid";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities/employee.entity';
 import { Repository } from 'typeorm';
@@ -11,21 +11,39 @@ export class EmployeesService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>
-  ) {}
-
+  ){}
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = await this.employeeRepository.save(createEmployeeDto);
+    const employee = await this.employeeRepository.save(createEmployeeDto)
     return employee;
   }
 
   findAll() {
-    this.employeeRepository.find();
+    return this.employeeRepository.find({
+      relations: {
+        location: true,
+        user: true,
+      }
+    });
+  }
+
+  findByLocation(id: number) {
+    return this.employeeRepository.findBy({
+      location: {
+        locationId: id
+      }
+    })
   }
 
   findOne(id: string) {
-    const employee = this.employeeRepository.findOneBy({ 
-      employeeId: id
-     });
+    const employee = this.employeeRepository.findOne({
+      where : {
+        employeeId: id
+      },
+      relations: {
+        location: true,
+        user: true,
+      }
+    })
     return employee;
   }
 
@@ -34,18 +52,16 @@ export class EmployeesService {
       employeeId: id,
       ...updateEmployeeDto
     })
-    if (!employeeToUpdate) {
-      throw new NotFoundException(`Employee with ID ${id} not found`);
-    }
-    return this.employeeRepository.save(employeeToUpdate);
+    this.employeeRepository.save(employeeToUpdate)
+    return employeeToUpdate;
   }
 
   remove(id: string) {
     this.employeeRepository.delete({
       employeeId: id
     })
-    return{
-      message: 'Employee deleted'
+    return {
+      message: "Employee deleted"
     }
   }
 }
