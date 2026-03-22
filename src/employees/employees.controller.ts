@@ -19,15 +19,15 @@ import { ROLES } from "src/auth/constants/roles.constants";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Employee } from "./entities/employee.entity";
 import { ApiAuth } from "src/auth/decorators/api.decorator";
-
+import { AwsService } from "src/aws/aws.service";
 
 @ApiAuth()
-
 @ApiTags("Employees")
 @Controller("employees")
 export class EmployeesController {
   constructor(
     private readonly employeesService: EmployeesService,
+    private readonly awsService: AwsService,
   ) { }
 
   @Auth(ROLES.MANAGER)
@@ -35,10 +35,10 @@ export class EmployeesController {
     status: 201,
     example: {
       employeeId: "UUID",
-      employeeName: "Karlo",
-      employeeEmail: "karlo@gmail.com",
-      employeeLastName: "Paz",
-      employeePhoneNumber: "442138841",
+      employeeName: "Luis Diego",
+      employeeEmail: "luisdiego@gmail.com",
+      employeeLastName: "Hernandez",
+      employeePhoneNumber: "4421373217",
       employeePhoto: null,
       location: null,
       user: null
@@ -53,7 +53,11 @@ export class EmployeesController {
   ) {
     if (!file) {
       return this.employeesService.create(createEmployeeDto);
-    } 
+    } else {
+      const photoUrl = await this.awsService.uploadFile(file);
+      createEmployeeDto.employeePhoto = photoUrl;
+      return this.employeesService.create(createEmployeeDto);
+    }
   }
 
   @Auth(ROLES.MANAGER, ROLES.EMPLOYEE)
@@ -63,6 +67,10 @@ export class EmployeesController {
     @Param("id") id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    const response = await this.awsService.uploadFile(file);
+    return this.employeesService.update(id, {
+      employeePhoto: response,
+    });
   }
 
   @Auth(ROLES.MANAGER)
@@ -96,7 +104,11 @@ export class EmployeesController {
   ) {
     if (file.originalname == "undefined") {
       return this.employeesService.update(id, updateEmployeeDto);
-    } 
+    } else {
+      const fileUrl = await this.awsService.uploadFile(file);
+      updateEmployeeDto.employeePhoto = fileUrl;
+      return this.employeesService.update(id, updateEmployeeDto);
+    }
 
   }
 

@@ -33,8 +33,4 @@ export class CreateEmployeeDto extends Employee {
   @ApiPropertyOptional()
   @IsOptional()
   employeePhoto: string;
-
-
-
-  
 }

@@ -1,26 +1,24 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EmployeesModule } from './employees/employees.module';
-import { ProductsModule } from './products/products.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { ProvidersModule } from './providers/providers.module';
-import { ManagersModule } from './managers/managers.module';
-import { LocationsModule } from './locations/locations.module';
-import { RegionsModule } from './regions/regions.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { EmployeesModule } from "./employees/employees.module";
+import { ProductsModule } from "./products/products.module";
+import { ConfigModule } from "@nestjs/config";
+import { ProvidersModule } from "./providers/providers.module";
+import { ManagersModule } from "./managers/managers.module";
+import { LocationsModule } from "./locations/locations.module";
+import { RegionsModule } from "./regions/regions.module";
+import { AuthModule } from "./auth/auth.module";
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: "postgres",
       host: process.env.host,
-      port: +(process.env.port ?? '5433'),
+      port: +process.env.port,
       username: "postgres",
-      password: "TheBestPassword",
+      password: process.env.pass,
       database: process.env.name,
       entities: [],
       autoLoadEntities: true,
@@ -33,10 +31,9 @@ import { UserModule } from './user/user.module';
     LocationsModule,
     RegionsModule,
     AuthModule,
-    UserModule,
+    AwsModule,
   ],
-
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
-export class AppModule { }
+export class AppModule {}

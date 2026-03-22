@@ -28,18 +28,18 @@ export class ManagersController {
   @Auth()
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.managersService.findOne(+id);
+    return this.managersService.findOne(id);
   }
 
   @Auth(ROLES.MANAGER)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateManagerDto: UpdateManagerDto) {
-    return this.managersService.update(+id, updateManagerDto);
+    return this.managersService.update(id, updateManagerDto);
   }
 
   @Auth()
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.managersService.remove(+id);
+    return this.managersService.remove(id);
   }
 }
