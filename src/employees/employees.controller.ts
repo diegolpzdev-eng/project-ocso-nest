@@ -22,6 +22,7 @@ import { ApiAuth } from "src/auth/decorators/api.decorator";
 
 
 @ApiAuth()
+
 @ApiTags("Employees")
 @Controller("employees")
 export class EmployeesController {

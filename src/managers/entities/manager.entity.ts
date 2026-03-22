@@ -1,32 +1,31 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Location } from "../../locations/entities/location.entity";
+import { User } from "src/auth/entities/user.entity";
+import { Location } from "src/locations/entities/location.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Manager {
-    @PrimaryGeneratedColumn('uuid')
-    managerId: string;
-    @Column('text')
-    managerFullName: string;
-    @Column('text')
-    managerSalary: number;
-    @Column('text')
-    managerEmail: string;
-    @Column('text')
-    managerPhoneNumber: string;
+  @PrimaryGeneratedColumn('uuid')
+  managerId: string;
+  @Column('text')
+  managerFullName: string;
+  @Column('float')
+  managerSalary: number;
+  @Column('text', {
+    unique: true
+  })
+  managerEmail: string;
+  @Column('text')
+  managerPhoneNumber: string;
 
-    @ManyToOne(() => Location, location => location.locationId)
-    location: Location;
+  @OneToOne(() => Location)
+  @JoinColumn({
+    name: "locationId"
+  })
+  location: Location | string;
+
+  @OneToOne(() => User)
+  @JoinColumn({
+    name: "userId"
+  })
+  user: User;
 }
