@@ -1,4 +1,16 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Location } from "../../locations/entities/location.entity";
 
