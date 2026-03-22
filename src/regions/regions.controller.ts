@@ -32,3 +32,12 @@ export class RegionsController {
     return this.regionsService.remove(+id);
   }
 }
+
+
+
+
+
+
+
+
+
