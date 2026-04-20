@@ -7,6 +7,7 @@ import { ManagersModule } from 'src/managers/managers.module';
 import { Manager } from 'src/managers/entities/manager.entity';
 
 @Module({
+  
   imports: [TypeOrmModule.forFeature([Location,Manager]), ManagersModule],
   controllers: [LocationsController],
   providers: [LocationsService],
