@@ -23,6 +23,7 @@ export class Manager {
   @JoinColumn({
     name: "locationId"
   })
+  
   location: Location | string;
 
   @OneToOne(() => User)

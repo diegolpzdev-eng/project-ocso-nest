@@ -14,6 +14,7 @@ export class CreateManagerDto extends Manager {
   @IsString()
   @MaxLength(16)
   managerPhoneNumber: string;
+  
   @IsNumber()
   @IsOptional()
   location: Location;
