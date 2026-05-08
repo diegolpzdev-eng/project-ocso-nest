@@ -24,12 +24,15 @@ import { Cookies } from "./decorators/cookies.decorator";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+
   @Post("register/:id")
   registerManager(
     @Query("role") role: string,
     @Body() createUserDto: CreateUserDto,
     @Param("id") id: string,
   ) {
+
+    
     if (role === "manager") {
       return this.authService.registerManager(id, createUserDto)
     } else if ( role === "employee" ) {
@@ -37,6 +40,7 @@ export class AuthController {
     }
     throw new BadRequestException("Rol inválido");
   }
+
 
   @Post("login")
   async login(
@@ -65,3 +69,6 @@ export class AuthController {
     return this.authService.updateUser(userEmail, updateUserDto);
   }
 }
+
+
+

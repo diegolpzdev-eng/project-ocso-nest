@@ -39,7 +39,10 @@ export class EmployeesController {
       employeeEmail: "luisdiego@gmail.com",
       employeeLastName: "Hernandez",
       employeePhoneNumber: "4421373217",
-    } as Employee,
+      employeePhoto: null,
+      location: null,
+      user: null
+    } as unknown as Employee,
   },
 )
   @Post()
