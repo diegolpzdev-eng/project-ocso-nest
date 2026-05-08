@@ -39,6 +39,7 @@ export class AuthService {
     }
     createUserDto.userPassword = bcrypt.hashSync(createUserDto.userPassword, 5);
     const user = await this.userRepository.save(createUserDto);
+    
     const manager = await this.managerRepository.preload({
       managerId: id,
     })
